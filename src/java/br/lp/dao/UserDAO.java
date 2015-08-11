@@ -1,14 +1,13 @@
 package br.lp.dao;
 
 import br.lp.javabeans.User;
-import com.br.cacique.MVCModel.ConnectionFactory;
+import br.lp.connectionfactory.ConnectionFactory;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -22,7 +21,7 @@ public class UserDAO implements DAO<User>{
 
     public UserDAO() {
         try {
-            connection = ConnectionFactory.getConnection();
+            connection = new ConnectionFactory().getConnection();
         } catch (SQLException | ClassNotFoundException ex) {
             System.err.println("Erro ao realizar a conexão");
             System.err.println(ex.getMessage());
@@ -47,37 +46,80 @@ public class UserDAO implements DAO<User>{
     }
 
     @Override
-    public boolean insert(User obj) {        
-        boolean success = false;
+    public boolean insert(User obj) { 
         String sql = "INSERT INTO usuario (username, password) "
                 + "VALUES (?,?)";
         try {
             ps = connection.prepareStatement(sql);
             ps.setString(1, obj.getUsername());
             ps.setString(2, obj.getPassword());
-            success = ps.execute();
+            ps.execute();
             connection.close();
+            return true;
         } catch (SQLException ex) {
             System.err.println("Erro na execução do SQL (Inserting user)");
             System.err.println(ex.getMessage());
         }       
         
-        return success;        
+        return false;        
     }
 
     @Override
     public boolean update(User old, User newObj) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (old.getId() == -1) return false;
+        
+        String sql = "UPDATE usuario SET username = ?, password = ? "
+                + "WHERE id = ?";
+        
+        try {
+            ps = connection.prepareStatement(sql);
+            ps.setString(1, newObj.getUsername());
+            ps.setString(2, newObj.getPassword());
+            ps.setInt(3, old.getId());
+            ps.executeUpdate();
+            connection.close();
+            return true;
+        } catch (SQLException ex) {
+            System.err.println("Erro ao atualizar");
+            System.err.println(ex.getMessage());
+        }
+        return false;
     }
 
     @Override
     public boolean delete(User obj) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        String sql= "DELETE FROM usuario WHERE id = ?";
+        
+        try {
+            ps = connection.prepareStatement(sql);
+            ps.setInt(1, obj.getId());
+            ps.execute();
+            connection.close();
+            return true;
+        } catch (SQLException ex) {
+            System.err.println("Erro ao deletar");
+            System.err.println(ex.getMessage());
+        }
+        return false;
     }
 
     @Override
     public List<User> read() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        List<User> users = new ArrayList<>();
+        String sql = "SELECT * FROM usuario";
+        
+        try {
+            ps = connection.prepareStatement(sql);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                users.add(new User(rs.getString("username"), 
+                        rs.getString("password")));
+            }
+        } catch (SQLException ex) {
+            System.err.println("Erro ao fazer a leitura no banco de dados");
+            System.err.println(ex.getMessage());
+        }
+        return users;
     }
     
 }
