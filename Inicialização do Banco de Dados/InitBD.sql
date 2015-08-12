@@ -4,4 +4,4 @@ username VARCHAR(30),
 password VARCHAR(30)
 );
 
-INSERT INTO usuarios (username, password) VALUES ('admin', 'admin');
+INSERT INTO usuario (username, password) VALUES ('admin', 'admin');
