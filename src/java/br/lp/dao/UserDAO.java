@@ -8,6 +8,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -28,23 +30,39 @@ public class UserDAO implements DAO<User>{
         }        
     }
     
-    private User getUserById(int id) {
-        String sql = "SELECT * FROM usuario WHERE id = ?";
-        User user = new User("", "");
+    /*private User getUserById(int id) {
+    String sql = "SELECT * FROM usuario WHERE id = ?";
+    User user = new User("", "");
+    try {
+    ps = connection.prepareStatement(sql);
+    ps.setInt(1, id);
+    rs = ps.executeQuery();
+    rs.first();
+    user = new User(rs.getString(1), rs.getString(2));
+    return user;
+    } catch (SQLException ex) {
+    System.err.println("Erro  na leitura (User)");
+    System.err.println(ex.getMessage());
+    }
+    return null;
+    }*/
+
+    public boolean isRegistered(User u) {
+        String sql = "SELECT * FROM usuario WHERE username = ? "
+                + "AND password = ?";
         try {
             ps = connection.prepareStatement(sql);
-            ps.setInt(1, id);
-            rs = ps.executeQuery();
-            rs.first();
-            user = new User(rs.getString(1), rs.getString(2));
-            return user;
+            ps.setString(1, u.getUsername());
+            ps.setString(2, u.getPassword());
+            rs = ps.executeQuery();            
+            return rs.first();
         } catch (SQLException ex) {
-            System.err.println("Erro  na leitura (User)");
+            System.err.println("Erro ao consultar usuário cadastrado");
             System.err.println(ex.getMessage());
         }
-        return null;
+        return false;
     }
-
+    
     @Override
     public boolean insert(User obj) { 
         String sql = "INSERT INTO usuario (username, password) "

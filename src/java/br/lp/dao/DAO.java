@@ -1,5 +1,6 @@
 package br.lp.dao;
 
+import br.lp.javabeans.User;
 import java.util.List;
 
 /**

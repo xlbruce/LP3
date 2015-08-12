@@ -23,7 +23,7 @@ public class ConnectionFactory {
 
     public ConnectionFactory() {
         //Faz a leitura do arquivo
-        final String CONFIGFILE = "config/dbconf.properties";
+        final String CONFIGFILE = "C:\\Temp\\LP3\\config\\dbconf.properties";
         BufferedReader reader = null;
         try {
             reader = new BufferedReader(new FileReader(CONFIGFILE));
