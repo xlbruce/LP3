@@ -18,8 +18,8 @@ import java.util.Properties;
 public class ConnectionFactory {
 
     public static String BANCO;
-    public static String USUARIO = "root";
-    public static String SENHA = "root";
+    public static String USUARIO;
+    public static String SENHA;
 
     public ConnectionFactory() {
         //Faz a leitura do arquivo
